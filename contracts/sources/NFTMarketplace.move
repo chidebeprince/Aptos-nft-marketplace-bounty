@@ -1,11 +1,12 @@
 // TODO# 1: Define Module and Marketplace Address
-address 0xf8e573e91d42844916ab33cdfbc1716fb1959debffc89eae36dca37c69e92d7d {
+address 0x0d649dfa77eb79eee40618baa7437bbefa6758e364069528c215307ba1de9fb7 {
 
     module NFTMarketplace {
         use 0x1::signer;
         use 0x1::vector;
         use 0x1::coin;
         use 0x1::aptos_coin;
+
 
         // TODO# 2: Define NFT Structure
 
@@ -17,25 +18,23 @@ address 0xf8e573e91d42844916ab33cdfbc1716fb1959debffc89eae36dca37c69e92d7d {
             uri: vector<u8>,
             price: u64,
             for_sale: bool,
-            rarity: u8  // 1 for common, 2 for rare, 3 for epic, etc.
+            rarity: u8, // 1 for common, 2 for rare, 3 for epic, etc.
+            ratings: vector<Rating>, // List of individual ratings
+            average_rating: u8, // Average rating score
         }
 
-
-        // TODO# 3: Define Marketplace Structure
-
-                struct Marketplace has key {
-            nfts: vector<NFT>,   
-        }
-
-        struct MarketplaceMetrics has key {
-            total_nfts_minted: u64,
-            total_sales: u64,
-            total_sales_value: u64,
-            total_nft_transfers: u64,
-            total_nfts_for_sale: u64
+        struct Rating has copy, drop, store {
+            rater: address,
+            score: u8, // Rating score, e.g., 1 to 5
         }
 
         
+        // TODO# 3: Define Marketplace Structure
+
+        struct Marketplace has key {
+            nfts: vector<NFT>
+        }
+
         // TODO# 4: Define ListedNFT Structure
 
                 struct ListedNFT has copy, drop {
@@ -52,21 +51,11 @@ address 0xf8e573e91d42844916ab33cdfbc1716fb1959debffc89eae36dca37c69e92d7d {
 
         // TODO# 6: Initialize Marketplace    
 
-                public entry fun initialize(account: &signer) {
+        public entry fun initialize(account: &signer) {
             let marketplace = Marketplace {
-                nfts: vector::empty<NFT>()
+                nfts: vector::empty<NFT>(),
             };
             move_to(account, marketplace);
-
-            // Create and publish the MarketplaceMetrics
-            let metrics = MarketplaceMetrics {
-                total_nfts_minted: 0,
-                total_sales: 0,
-                total_sales_value: 0,
-                total_nft_transfers: 0,
-                total_nfts_for_sale: 0
-            };
-            move_to(account, metrics);
         }    
 
 
@@ -90,13 +79,15 @@ address 0xf8e573e91d42844916ab33cdfbc1716fb1959debffc89eae36dca37c69e92d7d {
             // Create a new NFT
             let new_nft = NFT {
                 id: nft_id,
-                owner: marketplace_address, // Set the owner to the account calling the function
+                owner: marketplace_address,
                 name,
                 description,
                 uri,
                 price: 0,
                 for_sale: false,
                 rarity,
+                ratings: vector::empty<Rating>(),
+                average_rating: 0 as u8
             };
 
             vector::push_back(&mut marketplace.nfts, new_nft);
@@ -299,17 +290,45 @@ address 0xf8e573e91d42844916ab33cdfbc1716fb1959debffc89eae36dca37c69e92d7d {
             nft_ref.price = 0; // Reset the price
         }
 
+        // TODO# 22: Rate NFTs in the marketplace
+        public entry fun rate_nft(account: &signer,marketplace_addr: address,nft_id: u64,score: u8) acquires Marketplace {
+            assert!(score >= 1 && score <= 5, 600); // Ensure the score is between 1 and 5
 
-                #[view]
-        public fun get_metrics(marketplace_addr: address): (u64, u64, u64, u64, u64) acquires MarketplaceMetrics {
-                let metrics = borrow_global<MarketplaceMetrics>(marketplace_addr);
-                (
-                    metrics.total_sales,
-                    metrics.total_sales_value,
-                    metrics.total_nfts_minted,
-                    metrics.total_nft_transfers,
-                    metrics.total_nfts_for_sale
-                )
+            let marketplace = borrow_global_mut<Marketplace>(marketplace_addr);
+            let nft_ref = vector::borrow_mut(&mut marketplace.nfts, nft_id);
+
+            // Check if the user has already rated this NFT
+            let has_rated = false;
+            let rater_address = signer::address_of(account);
+            let ratings_len = vector::length(&nft_ref.ratings);
+            let i = 0;
+            while (i < ratings_len) {
+                let rating = vector::borrow(&nft_ref.ratings, i);
+                if (rating.rater == rater_address) {
+                    has_rated = true;
+                    break;
+                };
+                i = i + 1;
+            };
+            assert!(!has_rated, 601); // Prevent multiple ratings from the same user
+
+            // Add the new rating
+            let new_rating = Rating {
+                rater: rater_address,
+                score: score,
+            };
+            vector::push_back(&mut nft_ref.ratings, new_rating);
+
+            // Recalculate the average rating
+            let total_ratings = vector::length(&nft_ref.ratings);
+            let total_score: u64 = 0;
+            let j = 0;
+            while (j < total_ratings) {
+                let rating = vector::borrow(&nft_ref.ratings, j);
+                total_score = total_score + (rating.score as u64);
+                j = j + 1;
+            };
+            nft_ref.average_rating = (total_score / total_ratings) as u8;
         }
     }
 }
