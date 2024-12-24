@@ -54,6 +54,8 @@ const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
   const [recipientAddress, setRecipientAddress] = useState("");
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
   const [rating, setRating] = useState<number | null>(null);
+  const [nftRatings, setNftRatings] = useState<Record<number, number>>({});
+
 
 
 
@@ -68,6 +70,25 @@ const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
             marketplaceAddr,
             `${setAddress}::NFTMarketplace::Marketplace`
         );
+        // Fetch the Marketplace resource
+        const marketplaceResponse = await client.getAccountResource(
+          marketplaceAddr,
+          `${marketplaceAddr}::NFTMarketplace::Marketplace`
+        );
+
+        // Extract NFT data from the response
+        const marketplaceData = marketplaceResponse.data as { nfts: any[] };
+
+        // Create a map of NFT IDs to their average ratings
+        const nftRatings = marketplaceData.nfts.reduce((acc, nft) => {
+          acc[nft.id] = nft.average_rating; // Use the average_rating field
+          return acc;
+        }, {});
+
+        // Update the state with NFT ratings
+        setNftRatings(nftRatings);
+
+
         const nftList = (response.data as { nfts: NFT[] }).nfts;
 
         const hexToUint8Array = (hexString: string): Uint8Array => {
@@ -269,6 +290,24 @@ const MarketView: React.FC<MarketViewProps> = ({ marketplaceAddr }) => {
               <p>{nft.description}</p>
               <p>ID: {nft.id}</p>
               <p>Owner: {truncateAddress(nft.owner)}</p>
+
+              {/* Display average rating as stars */}
+              <div style={{ marginTop: "10px" }}>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <span
+                    key={index}
+                    style={{
+                      color: index < (nftRatings[nft.id] || 0) ? "#fadb14" : "#d9d9d9",
+                      fontSize: "18px",
+                    }}
+                  >
+                    ★
+                  </span>
+                ))}
+                <span style={{ marginLeft: "8px", fontSize: "14px" }}>
+                  {nftRatings[nft.id] ? `(${nftRatings[nft.id]}/5)` : "No ratings"}
+                </span>
+              </div>
             </Card>
           </Col>
         ))}

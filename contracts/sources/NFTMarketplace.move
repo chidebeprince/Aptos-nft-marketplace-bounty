@@ -297,27 +297,30 @@ address 0x0d649dfa77eb79eee40618baa7437bbefa6758e364069528c215307ba1de9fb7 {
             let marketplace = borrow_global_mut<Marketplace>(marketplace_addr);
             let nft_ref = vector::borrow_mut(&mut marketplace.nfts, nft_id);
 
-            // Check if the user has already rated this NFT
-            let has_rated = false;
             let rater_address = signer::address_of(account);
+            let found = false;
+
+            // Update the user's rating if it already exists
             let ratings_len = vector::length(&nft_ref.ratings);
             let i = 0;
             while (i < ratings_len) {
-                let rating = vector::borrow(&nft_ref.ratings, i);
-                if (rating.rater == rater_address) {
-                    has_rated = true;
+                let rating_ref = vector::borrow_mut(&mut nft_ref.ratings, i);
+                if (rating_ref.rater == rater_address) {
+                    rating_ref.score = score; // Update the existing score
+                    found = true;
                     break;
                 };
                 i = i + 1;
             };
-            assert!(!has_rated, 601); // Prevent multiple ratings from the same user
 
-            // Add the new rating
-            let new_rating = Rating {
-                rater: rater_address,
-                score: score,
+            // If the user hasn't rated yet, add a new rating
+            if (!found) {
+                let new_rating = Rating {
+                    rater: rater_address,
+                    score: score,
+                };
+                vector::push_back(&mut nft_ref.ratings, new_rating);
             };
-            vector::push_back(&mut nft_ref.ratings, new_rating);
 
             // Recalculate the average rating
             let total_ratings = vector::length(&nft_ref.ratings);
