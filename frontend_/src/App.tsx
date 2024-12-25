@@ -10,7 +10,7 @@ import MyNFTs from "./pages/MyNFTs";
 import { AptosClient } from "aptos";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
-const client = new AptosClient("https://fullnode.devnet.aptoslabs.com/v1");
+const client = new AptosClient("https://fullnode.testnet.aptoslabs.com/v1");
 const setAddress = process.env.REACT_APP_MARKETPLACE_ADDRESS;
 const marketplaceAddr = `${setAddress}`;
 
