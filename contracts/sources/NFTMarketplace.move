@@ -1,5 +1,5 @@
 // TODO# 1: Define Module and Marketplace Address
-address 0x0d649dfa77eb79eee40618baa7437bbefa6758e364069528c215307ba1de9fb7 {
+address yourWalletAddress {
 
     module NFTMarketplace {
         use 0x1::signer;
