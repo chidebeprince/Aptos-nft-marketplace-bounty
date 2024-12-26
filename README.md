@@ -70,7 +70,7 @@ struct Rating has copy, drop, store {
 * Updates automatically when new ratings are added
 * Stored in `average_rating` field of NFT struct
 
-### Summary
+## Summary
 These features significantly enhance the functionality of the marketplace, offering users a broader range of tools and options. By improving the app's usability and interactivity, they create a more seamless, engaging, and enjoyable experience for all users.
 
 
