@@ -1,4 +1,33 @@
-# Aptos NFT Marketplace - New Features
+# Aptos NFT Marketplace Bounty
+
+# Set-up Instructions (Codespaces)
+## Download and set up Petra wallet
+* Install the aptos petra wallet and create an account.
+
+## Replace "yourWalletAddress" with Petra wallet address
+* Copy the wallet address from your newly created or existing petra wallet account.
+* Go to the settings tab of your wallet and click on "Manage account", put in your password and then copy your private key and keep it safe. We'll use it later on.
+* Locate these files in the explorer `NFTMarketplace.move`, `Move.toml` in the contracts/source directory and `.env` file in the frontend_ directory. Replace "yourWalletAddress" with the wallet address of your petra account, the one you copied earlier.
+
+## Set up environment and start server
+Open a terminal and run the following commands one after the other:
+* `curl -fsSL "https://aptos.dev/scripts/install_cli.py" | python3` (to install aptos cli)
+* `aptos info` (to verfify that the cli installed successfully)
+* `aptos init` (choose "testnet" by typing it, and paste in the private key you copied once prompted)
+* `aptos move publish` (type yes and click enter after running this command to publish the smart contract) 
+* `cd frontend_`
+* `curl -fsSL https://fnm.vercel.app/install | bash`
+
+Open a new terminal and continue running the following commands one after the other:
+* `source /home/vscode/.bashrc`
+* `fnm install --lts`
+* `npm i @aptos-labs/wallet-adapter-react @aptos-labs/wallet-adapter-ant-design petra-plugin-wallet-adapter --legacy-peer-deps`
+* `npm install react-router-dom --legacy-peer-deps`
+* `npm start` (to start the frontend server)
+
+Your all set to explore the new features!!!
+
+# New Features
 ## 1. NFT Transfer Feature
 The marketplace now includes a dedicated NFT transfer functionality that allows users to securely transfer their NFTs to other addresses. I added this feature to both the Marketplace (`MarketView.tsx`) page and the my-collections (`MyNFTs.tsx`) page of the frontend of the application, so that users can also transfer their nfts to others without having to list it for sale in the marketplace.
 
