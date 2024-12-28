@@ -22,7 +22,30 @@ function App() {
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState<string | null>(null);
 
+  // Function to initialize the marketplace
   const initializeMarketplace = async () => {
+    try {
+      // Check if the marketplace is already initialized
+      const accountResource = await client.getAccountResource(
+        marketplaceAddr,
+        `${marketplaceAddr}::NFTMarketplace::Marketplace`
+      );
+
+      if (accountResource) {
+        console.log("Marketplace is already initialized.");
+        return; // Marketplace is already initialized, no need to initialize again
+      }
+    } catch (error: any) {
+      if (error.status === 404) {
+        console.log("Marketplace is not initialized. Initializing now...");
+      } else {
+        console.error("Error checking marketplace resource:", error);
+        message.error("Failed to check marketplace status.");
+        return;
+      }
+    }
+
+    // Initialize the marketplace if not already initialized
     try {
       const entryFunctionPayload = {
         type: "entry_function_payload",
@@ -30,21 +53,21 @@ function App() {
         type_arguments: [],
         arguments: [],
       };
-  
+
       const txnResponse = await (window as any).aptos.signAndSubmitTransaction(entryFunctionPayload);
       await client.waitForTransaction(txnResponse.hash);
-  
+
       message.success("Marketplace initialized successfully!");
     } catch (error) {
       console.error("Error initializing marketplace:", error);
       message.error("Failed to initialize the marketplace.");
     }
   };
-  
+
+  // Call initializeMarketplace when the app starts
   useEffect(() => {
     initializeMarketplace();
-  }, []);
-  
+  }, [signAndSubmitTransaction]);  
 
   // Function to open the Mint NFT modal
   const handleMintNFTClick = () => setIsModalVisible(true);
