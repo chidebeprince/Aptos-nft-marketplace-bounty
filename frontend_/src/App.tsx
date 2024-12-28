@@ -9,6 +9,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MyNFTs from "./pages/MyNFTs";
 import { AptosClient } from "aptos";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useEffect } from "react";
+
 
 const client = new AptosClient("https://fullnode.testnet.aptoslabs.com/v1");
 const setAddress = process.env.REACT_APP_MARKETPLACE_ADDRESS;
@@ -20,6 +22,29 @@ function App() {
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState<string | null>(null);
 
+  const initializeMarketplace = async () => {
+    try {
+      const entryFunctionPayload = {
+        type: "entry_function_payload",
+        function: `${marketplaceAddr}::NFTMarketplace::initialize`,
+        type_arguments: [],
+        arguments: [],
+      };
+  
+      const txnResponse = await (window as any).aptos.signAndSubmitTransaction(entryFunctionPayload);
+      await client.waitForTransaction(txnResponse.hash);
+  
+      message.success("Marketplace initialized successfully!");
+    } catch (error) {
+      console.error("Error initializing marketplace:", error);
+      message.error("Failed to initialize the marketplace.");
+    }
+  };
+  
+  useEffect(() => {
+    initializeMarketplace();
+  }, []);
+  
 
   // Function to open the Mint NFT modal
   const handleMintNFTClick = () => setIsModalVisible(true);
