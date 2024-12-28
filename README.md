@@ -13,7 +13,7 @@
 Open a terminal and run the following commands one after the other:
 * `curl -fsSL "https://aptos.dev/scripts/install_cli.py" | python3` (to install aptos cli)
 * `aptos info` (to verfify that the cli installed successfully)
-* `aptos init` (choose "testnet" by typing it, and paste in the private key you copied once prompted)
+* `aptos init` (choose "testnet" by typing it, and paste in the private key you copied once prompted. Also locate and click the link that appears if it fails to redirect you automatically to the faucet)
 * `aptos move publish` (type yes and click enter after running this command to publish the smart contract) 
 * `cd frontend_`
 * `curl -fsSL https://fnm.vercel.app/install | bash`
