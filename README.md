@@ -15,7 +15,7 @@ Open a terminal and run the following commands one after the other:
 * `aptos info` (to verfify that the cli installed successfully)
 * `cd contracts`
 * `aptos init` (choose "testnet" by typing it, and paste in the private key you copied once prompted. Also locate and click the link that appears if it fails to redirect you automatically to the faucet)
-* `aptos move publish` (type yes and click enter after running this command to publish the smart contract)
+* `aptos move publish` (type yes when prompted and click enter to publish the smart contract)
 * `cd ..` 
 * `cd frontend_`
 * `curl -fsSL https://fnm.vercel.app/install | bash`
