@@ -21,6 +21,7 @@ Open a terminal and run the following commands one after the other:
 * `curl -fsSL https://fnm.vercel.app/install | bash`
 
 Open a new terminal and continue running the following commands one after the other:
+* `cd frontend_`
 * `source /home/vscode/.bashrc`
 * `fnm install --lts`
 * `npm i @aptos-labs/wallet-adapter-react @aptos-labs/wallet-adapter-ant-design petra-plugin-wallet-adapter --legacy-peer-deps`
