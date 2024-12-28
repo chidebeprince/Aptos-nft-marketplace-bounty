@@ -7,7 +7,7 @@
 ## Replace "yourWalletAddress" with Petra wallet address
 * Copy the wallet address from your newly created or existing petra wallet account.
 * Go to the settings tab of your wallet and click on "Manage account", put in your password and then copy your private key and keep it safe. We'll use it later on.
-* Locate these files in the explorer `NFTMarketplace.move`, `Move.toml` in the contracts/source directory and `.env` file in the frontend_ directory. Replace "yourWalletAddress" with the wallet address of your petra account, the one you copied earlier.
+* Locate these files in the explorer `NFTMarketplace.move`, `Move.toml` in the contracts/source directory and `.env` file in the frontend_ directory. Locate and replace "yourWalletAddress" with the wallet address of your petra account, the one you copied earlier.
 
 ## Set up environment and start server
 Open a terminal and run the following commands one after the other:
@@ -25,7 +25,7 @@ Open a new terminal and continue running the following commands one after the ot
 * `npm install react-router-dom --legacy-peer-deps`
 * `npm start` (to start the frontend server)
 
-Your all set to explore the new features!!!
+Now you're all set to explore the new features!!!
 
 # New Features
 ## 1. NFT Transfer Feature
