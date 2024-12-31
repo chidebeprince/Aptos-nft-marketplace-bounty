@@ -28,6 +28,8 @@ Open a new terminal and continue running the following commands one after the ot
 * `npm install react-router-dom --legacy-peer-deps`
 * `npm start` (to start the frontend server)
 
+PS: if you encounter an error after signing the transaction to initialize the marketplace, just ignore it and try to mint an nft.
+
 Now you're all set to explore the new features!!!
 
 # New Features
